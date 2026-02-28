@@ -3,7 +3,8 @@ services:
   angular-app:
     image: nouran10/angular-app
     ports:
-      - "0.0.0.0:4200:80"      
+      - "0.0.0.0:4200:80"
+
   spring-boot-app:
     image: nouran10/springboot-app
     ports:
@@ -22,7 +23,7 @@ services:
       mysql:
         condition: service_healthy
 
- mysql:
+  mysql:
     image: mysql:5.7
     restart: always
     environment:
@@ -37,5 +38,6 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+
 volumes:
   demo:
