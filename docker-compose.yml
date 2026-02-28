@@ -19,18 +19,23 @@ services:
       - SPRING_MVC_CORS_ALLOWED_METHODS=GET,POST,PUT,DELETE
       - SPRING_MVC_CORS_ALLOWED_HEADERS=*
     depends_on:
-      - mysql
+      mysql:
+        condition: service_healthy
 
-  mysql:
+ mysql:
     image: mysql:5.7
     restart: always
     environment:
-      MYSQL_DATABASE: 'demo'
-      MYSQL_ROOT_USERNAME: 'root'
-      MYSQL_ROOT_PASSWORD: 'root'
+      MYSQL_DATABASE: demo
+      MYSQL_ROOT_PASSWORD: root
     ports:
-      - '3307:3306'
+      - "3307:3306"
     volumes:
       - demo:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 volumes:
   demo:
