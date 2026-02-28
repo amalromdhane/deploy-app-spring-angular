@@ -1,7 +1,4 @@
-export const environment :
-{
-  production?:boolean,
-}
-= {
-    production: false,
-  };
+export const environment = {
+  production: true,
+  apiUrl: 'http://spring-boot-app:8081'
+};
