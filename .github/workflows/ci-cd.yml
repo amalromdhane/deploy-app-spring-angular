@@ -1,0 +1,49 @@
+name: CI-CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build Backend Image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/springboot-app ./springboot/app
+
+      - name: Build Frontend Image
+        run: docker build -t ${{ secrets.DOCKERHUB_USERNAME }}/angular-app ./angular-app
+
+      - name: Push Backend Image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/springboot-app
+
+      - name: Push Frontend Image
+        run: docker push ${{ secrets.DOCKERHUB_USERNAME }}/angular-app
+
+  test:
+    runs-on: ubuntu-latest
+    needs: build-and-push
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Start application
+        run: docker-compose up -d
+
+      - name: Wait
+        run: sleep 30
+
+      - name: Check containers
+        run: docker ps
